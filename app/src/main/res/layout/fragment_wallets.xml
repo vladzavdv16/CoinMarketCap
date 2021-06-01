@@ -9,6 +9,7 @@
         android:id="@+id/wallet_card"
         android:layout_width="?attr/walletCardWidth"
         android:layout_height="?attr/walletCardHeight"
+        android:layout_marginTop="?attr/actionBarSize"
         android:background="@drawable/bq_wallet_card"
         android:padding="56dp"
         android:scaleType="fitCenter"

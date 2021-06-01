@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="?attr/walletCardWidth"
     android:layout_height="?attr/walletCardHeight"
+    android:layout_marginTop="?attr/actionBarSize"
     android:background="@drawable/bq_wallet_card">
 
     <androidx.constraintlayout.widget.Guideline
