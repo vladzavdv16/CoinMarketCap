@@ -19,6 +19,7 @@ import com.light.loftcoin.R;
 import com.light.loftcoin.data.Coin;
 import com.light.loftcoin.databinding.LiRatesBinding;
 import com.light.loftcoin.util.Formatter;
+import com.light.loftcoin.util.OutlineCircle;
 import com.squareup.picasso.Picasso;
 
 import java.text.NumberFormat;
@@ -96,14 +97,7 @@ class RatesAdapter extends ListAdapter<Coin, RatesAdapter.ViewHolder> {
         public ViewHolder(@NonNull LiRatesBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
-            binding.logo.setOutlineProvider(new ViewOutlineProvider() {
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    int minSize = Math.min(view.getWidth(), view.getHeight());
-                    outline.setRoundRect(0,0,view.getWidth(),view.getHeight(), minSize/2f);
-                }
-            });
-            binding.logo.setClipToOutline(true);
+            OutlineCircle.apply(binding.logo);
         }
     }
 }

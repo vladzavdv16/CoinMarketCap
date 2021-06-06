@@ -19,4 +19,9 @@
     <string name="currency">Выбор валюты</string>
     <string name="sort">Сортировать</string>
 
+    <!-- Currency Dialog -->
+    <string name="usd">Доллар</string>
+    <string name="eur">Евро</string>
+    <string name="rub">Рубль</string>
+
 </resources>

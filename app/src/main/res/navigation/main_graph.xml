@@ -9,15 +9,20 @@
         android:id="@+id/walletsFragment"
         android:name="com.light.loftcoin.ui.wallets.WalletsFragment"
         android:label="@string/wallets"
-        tools:layout="@layout/fragment_wallets"/>
+        tools:layout="@layout/fragment_wallets" />
     <fragment
         android:id="@+id/ratesFragment"
         android:name="com.light.loftcoin.ui.rates.RatesFragment"
         android:label="@string/rates"
-        tools:layout="@layout/fragment_rates"/>
+        tools:layout="@layout/fragment_rates" />
     <fragment
         android:id="@+id/converterFragment"
         android:name="com.light.loftcoin.ui.converter.ConverterFragment"
         android:label="@string/converter"
-        tools:layout="@layout/fragment_converter"/>
+        tools:layout="@layout/fragment_converter" />
+    <dialog
+        android:id="@+id/currency_dialog"
+        android:name="com.light.loftcoin.ui.currency.CurrencyDialog"
+        android:label="CurrencyDialog"
+        tools:layout="@layout/dialog_currency" />
 </navigation>

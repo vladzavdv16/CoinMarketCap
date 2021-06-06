@@ -53,6 +53,9 @@ public class RatesFragment extends Fragment {
         binding.recycler.swapAdapter(adapter, false);
         binding.recycler.setHasFixedSize(true);
         viewModel.coins().observe(getViewLifecycleOwner(), adapter::submitList);
+        viewModel.isRefreshing().observe(getViewLifecycleOwner(), (refreshing) -> {
+            binding.refresh.setRefreshing(refreshing);
+        });
 
     }
 
@@ -64,7 +67,12 @@ public class RatesFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        Timber.d("%s", item);
+        if (R.id.currency_dialog == item.getItemId()) {
+            NavHostFragment
+                    .findNavController(this)
+                    .navigate(R.id.currency_dialog);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
