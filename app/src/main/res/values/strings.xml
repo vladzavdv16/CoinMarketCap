@@ -15,4 +15,8 @@
     <string name="rates">Курс</string>
     <string name="converter">Конвертер</string>
 
+    <!--MenuRates-->
+    <string name="currency">Выбор валюты</string>
+    <string name="sort">Сортировать</string>
+
 </resources>
