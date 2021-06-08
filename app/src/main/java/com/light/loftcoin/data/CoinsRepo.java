@@ -6,6 +6,7 @@ import androidx.annotation.WorkerThread;
 import java.io.IOException;
 import java.util.List;
 
+
 public interface CoinsRepo {
 
     @NonNull

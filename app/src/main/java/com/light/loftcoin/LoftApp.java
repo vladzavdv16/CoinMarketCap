@@ -23,5 +23,8 @@ public class LoftApp extends Application {
         component = DaggerAppComponent.builder()
                 .application(this)
                 .build();
+
+        Timber.d("%s", component.coinsRepo());
+        Timber.d("%s", component.coinsRepo());
     }
 }

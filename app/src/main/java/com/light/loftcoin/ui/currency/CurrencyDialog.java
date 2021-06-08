@@ -40,4 +40,6 @@ public class CurrencyDialog extends AppCompatDialogFragment {
     public void onActivityCreated(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
     }
+
+
 }
