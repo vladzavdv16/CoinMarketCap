@@ -24,12 +24,12 @@ public class RatesViewModel extends ViewModel {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    private final CoinsRepo repo;
+//    private final CoinsRepo repo;
 
     private Future<?> future;
 
     public RatesViewModel() {
-        repo = new CmcCoinsRepo();
+//        repo = new CmcCoinsRepo();
         refresh();
     }
 
@@ -44,15 +44,15 @@ public class RatesViewModel extends ViewModel {
     }
 
     final void refresh() {
-        isRefreshing.postValue(true);
-        future = executor.submit(() -> {
-            try {
-                coins.postValue(new ArrayList<>(repo.listings("USD")));
-                isRefreshing.postValue(false);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+//        isRefreshing.postValue(true);
+//        future = executor.submit(() -> {
+//            try {
+//                coins.postValue(new ArrayList<>(repo.listings("USD")));
+//                isRefreshing.postValue(false);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        });
     }
 
     @Override
