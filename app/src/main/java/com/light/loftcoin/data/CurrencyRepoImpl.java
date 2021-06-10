@@ -10,10 +10,13 @@ import com.light.loftcoin.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CurrencyRepoImpl implements CurrencyRepo{
+import javax.inject.Inject;
+
+class CurrencyRepoImpl implements CurrencyRepo{
 
     private final Context context;
 
+    @Inject
     public CurrencyRepoImpl(@NonNull Context context){
         this.context = context;
     }

@@ -9,7 +9,7 @@ import timber.log.Timber;
 
 public class LoftApp extends Application {
 
-    private AppComponent component;
+    private BaseComponent component;
 
     @Override
     public void onCreate() {
@@ -23,5 +23,9 @@ public class LoftApp extends Application {
         component = DaggerAppComponent.builder()
                 .application(this)
                 .build();
+    }
+
+    public BaseComponent getComponent() {
+        return component;
     }
 }

@@ -11,17 +11,23 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.light.loftcoin.BaseComponent;
 import com.light.loftcoin.R;
 import com.light.loftcoin.databinding.FragmentRatesBinding;
 import com.light.loftcoin.util.PriceFormatter;
 
+import javax.inject.Inject;
+
 import timber.log.Timber;
 
 public class RatesFragment extends Fragment {
+
+//    private final RatesComponent component;
 
     private FragmentRatesBinding binding;
 
@@ -31,10 +37,16 @@ public class RatesFragment extends Fragment {
 
 //    private CurrencyRepo currencyRepo;
 
+//    @Inject
+//    public RatesFragment(BaseComponent baseComponent){
+//        component = DaggerRatesComponent.builder()
+//                .baseComponent(baseComponent).build();
+//    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = new ViewModelProvider(this).get(RatesViewModel.class);
+//        viewModel = new ViewModelProvider(this, component.viewModelFactory().get(RatesViewModel.class));
         adapter = new RatesAdapter(new PriceFormatter());
     }
 

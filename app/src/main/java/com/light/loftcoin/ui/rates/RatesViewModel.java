@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.light.loftcoin.data.CmcCoinsRepo;
+
 import com.light.loftcoin.data.Coin;
 import com.light.loftcoin.data.CoinsRepo;
 
@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import javax.inject.Inject;
 
 public class RatesViewModel extends ViewModel {
 
@@ -28,6 +30,7 @@ public class RatesViewModel extends ViewModel {
 
     private Future<?> future;
 
+    @Inject
     public RatesViewModel() {
 //        repo = new CmcCoinsRepo();
         refresh();

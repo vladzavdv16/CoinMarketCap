@@ -10,12 +10,11 @@ import java.util.Map;
 @AutoValue
 public abstract class Coin {
 
-    public abstract int id ();
+    public abstract int id();
 
     public abstract String name();
 
     public abstract String symbol();
-
 
     @Memoized
     public double price() {

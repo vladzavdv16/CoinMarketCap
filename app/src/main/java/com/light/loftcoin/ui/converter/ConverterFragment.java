@@ -12,7 +12,13 @@ import androidx.fragment.app.Fragment;
 
 import com.light.loftcoin.R;
 
+import javax.inject.Inject;
+
 public class ConverterFragment extends Fragment {
+
+    @Inject
+    public ConverterFragment(){
+    }
 
     @Nullable
     @Override
