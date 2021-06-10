@@ -27,7 +27,7 @@ import timber.log.Timber;
 
 public class RatesFragment extends Fragment {
 
-//    private final RatesComponent component;
+    private final RatesComponent component;
 
     private FragmentRatesBinding binding;
 
@@ -35,18 +35,18 @@ public class RatesFragment extends Fragment {
 
     private RatesViewModel viewModel;
 
-//    private CurrencyRepo currencyRepo;
 
-//    @Inject
-//    public RatesFragment(BaseComponent baseComponent){
-//        component = DaggerRatesComponent.builder()
-//                .baseComponent(baseComponent).build();
-//    }
+    @Inject
+    public RatesFragment(BaseComponent baseComponent) {
+        component = DaggerRatesComponent.builder()
+                .baseComponent(baseComponent).build();
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        viewModel = new ViewModelProvider(this, component.viewModelFactory().get(RatesViewModel.class));
+        viewModel = new ViewModelProvider(this, component.viewModelFactory())
+                .get(RatesViewModel.class);
         adapter = new RatesAdapter(new PriceFormatter());
     }
 
