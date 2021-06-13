@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.light.loftcoin.data.CoinsRepo;
+import com.light.loftcoin.data.CurrencyRepo;
 import com.light.loftcoin.data.DataModule;
 import com.light.loftcoin.widget.AppModule;
 
@@ -20,10 +21,7 @@ import dagger.Component;
         }
 )
 
-public abstract class AppComponent {
-
-    abstract Context context();
-    abstract CoinsRepo coinsRepo();
+abstract class AppComponent implements BaseComponent {
 
     @Component.Builder
     static abstract class Builder {

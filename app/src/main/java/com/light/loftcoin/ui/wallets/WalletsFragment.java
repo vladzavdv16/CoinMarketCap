@@ -18,7 +18,13 @@ import androidx.recyclerview.widget.SnapHelper;
 import com.light.loftcoin.R;
 import com.light.loftcoin.databinding.FragmentWalletsBinding;
 
+import javax.inject.Inject;
+
 public class WalletsFragment extends Fragment {
+
+    @Inject
+    public WalletsFragment(){
+    }
 
     private SnapHelper helper;
 

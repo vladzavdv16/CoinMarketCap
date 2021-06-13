@@ -14,14 +14,19 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.light.loftcoin.BaseComponent;
 import com.light.loftcoin.R;
 import com.light.loftcoin.databinding.FragmentRatesBinding;
 import com.light.loftcoin.util.PriceFormatter;
 
-import timber.log.Timber;
+import javax.inject.Inject;
+
 
 public class RatesFragment extends Fragment {
+
+    private final RatesComponent component;
 
     private FragmentRatesBinding binding;
 
@@ -29,12 +34,18 @@ public class RatesFragment extends Fragment {
 
     private RatesViewModel viewModel;
 
-//    private CurrencyRepo currencyRepo;
+
+    @Inject
+    public RatesFragment(BaseComponent baseComponent) {
+        component = DaggerRatesComponent.builder()
+                .baseComponent(baseComponent).build();
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = new ViewModelProvider(this).get(RatesViewModel.class);
+        viewModel = new ViewModelProvider(this, component.viewModelFactory())
+                .get(RatesViewModel.class);
         adapter = new RatesAdapter(new PriceFormatter());
     }
 
@@ -52,6 +63,7 @@ public class RatesFragment extends Fragment {
         binding.recycler.setLayoutManager(new LinearLayoutManager(view.getContext()));
         binding.recycler.swapAdapter(adapter, false);
         binding.recycler.setHasFixedSize(true);
+        binding.refresh.setOnRefreshListener(viewModel::refresh);
         viewModel.coins().observe(getViewLifecycleOwner(), adapter::submitList);
         viewModel.isRefreshing().observe(getViewLifecycleOwner(), (refreshing) -> {
             binding.refresh.setRefreshing(refreshing);
