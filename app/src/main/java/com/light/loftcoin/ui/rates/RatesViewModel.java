@@ -3,37 +3,45 @@ package com.light.loftcoin.ui.rates;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 
 import com.light.loftcoin.data.Coin;
 import com.light.loftcoin.data.CoinsRepo;
+import com.light.loftcoin.data.CurrencyRepo;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+
 
 import javax.inject.Inject;
 
 public class RatesViewModel extends ViewModel {
 
-    private final MutableLiveData<List<Coin>> coins = new MutableLiveData<>();
+    private final LiveData<List<Coin>> coins;
 
     private final MutableLiveData<Boolean> isRefreshing = new MutableLiveData<>();
 
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-
-    private final CoinsRepo repo;
-
-    private Future<?> future;
+    private final MutableLiveData<Boolean> forceRefresh = new MutableLiveData<>(false);
 
     @Inject
-    public RatesViewModel(CoinsRepo repo) {
-       this.repo = repo;
-        refresh();
+    public RatesViewModel(CoinsRepo coinsRepo, CurrencyRepo currencyRepo) {
+
+       final LiveData<CoinsRepo.Query> query = Transformations.switchMap(forceRefresh, (r) -> {
+            return Transformations.map(currencyRepo.currency(), (c) -> {
+                isRefreshing.postValue(true);
+                return CoinsRepo.Query.builder()
+                        .currency(c.code())
+                        .forceUpdate(r)
+                        .build();
+            });
+        });
+
+        final LiveData<List<Coin>> coins = Transformations.switchMap(query, coinsRepo::listings);
+        this.coins = Transformations.map(coins, (c) -> {
+            isRefreshing.postValue(false);
+            return c;
+        });
     }
 
     @NonNull
@@ -47,23 +55,7 @@ public class RatesViewModel extends ViewModel {
     }
 
     final void refresh() {
-        isRefreshing.postValue(true);
-        future = executor.submit(() -> {
-            try {
-                coins.postValue(new ArrayList<>(repo.listings("USD")));
-                isRefreshing.postValue(false);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        forceRefresh.postValue(true);
     }
-
-    @Override
-    protected void onCleared() {
-        if (future != null) {
-            future.cancel(true);
-        }
-    }
-
 
 }

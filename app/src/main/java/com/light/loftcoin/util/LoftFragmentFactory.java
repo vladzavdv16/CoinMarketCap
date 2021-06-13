@@ -13,11 +13,11 @@ import timber.log.Timber;
 
 public class LoftFragmentFactory extends FragmentFactory {
 
-    private final Map<Class<?>, Provider<Fragment>> provider;
+    private final Map<Class<?>, Provider<Fragment>> providers;
 
     @Inject
-    LoftFragmentFactory(Map<Class<?>, Provider<Fragment>> provider){
-        this.provider = provider;
+    LoftFragmentFactory(Map<Class<?>, Provider<Fragment>> providers) {
+        this.providers = providers;
     }
 
     @NonNull
@@ -25,9 +25,9 @@ public class LoftFragmentFactory extends FragmentFactory {
     public Fragment instantiate(@NonNull ClassLoader classLoader, @NonNull String className) {
         try {
             final Class<?> classKey = Class.forName(className);
-            final Provider<Fragment> providers = provider.get(classKey);
-            if (providers != null){
-                return providers.get();
+            final Provider<Fragment> provider = providers.get(classKey);
+            if (provider != null) {
+                return provider.get();
             }
         } catch (ClassNotFoundException e) {
             Timber.e(e);
