@@ -19,6 +19,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
 @Module
@@ -45,6 +46,7 @@ public abstract class DataModule {
         }).build());
         builder.baseUrl(BuildConfig.API_ENDPOINT);
         builder.addConverterFactory(MoshiConverterFactory.create(moshi));
+        builder.addCallAdapterFactory(RxJava2CallAdapterFactory.createAsync());
         return builder.build();
     }
 
