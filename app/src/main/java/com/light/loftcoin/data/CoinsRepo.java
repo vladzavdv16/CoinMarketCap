@@ -12,6 +12,7 @@ import java.util.List;
 
 public interface CoinsRepo {
 
+    @NonNull
     LiveData<List<Coin>> listings(@NonNull Query query);
 
     @AutoValue
