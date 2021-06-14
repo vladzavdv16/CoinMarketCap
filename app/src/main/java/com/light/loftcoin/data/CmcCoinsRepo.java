@@ -29,9 +29,8 @@ class CmcCoinsRepo implements CoinsRepo {
     private final LoftDataBase db;
 
 
-
     @Inject
-    public CmcCoinsRepo(CmcApi api, LoftDataBase db ) {
+    public CmcCoinsRepo(CmcApi api, LoftDataBase db) {
         this.api = api;
         this.db = db;
 
@@ -51,9 +50,6 @@ class CmcCoinsRepo implements CoinsRepo {
                 .subscribeOn(Schedulers.io())
                 ;
 
-
-//        fetchFromNetworkIfNecessary(query);
-//        return fetchFromDb(query);
     }
 
     private Observable<List<RoomCoin>> fetchFromDb(Query query) {
@@ -78,7 +74,7 @@ class CmcCoinsRepo implements CoinsRepo {
                     coin.id()
             ));
         }
-        return roomCoins;
+        return (Observable<List<RoomCoin>>) roomCoins;
     }
 
 }

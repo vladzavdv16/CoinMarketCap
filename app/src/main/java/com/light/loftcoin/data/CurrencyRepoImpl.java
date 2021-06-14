@@ -17,7 +17,11 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-public class CurrencyRepoImpl implements CurrencyRepo{
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+
+public class CurrencyRepoImpl implements CurrencyRepo {
 
 
     private static final String KEY_CURRENCY = "currency";
@@ -44,8 +48,18 @@ public class CurrencyRepoImpl implements CurrencyRepo{
 
     @NonNull
     @Override
-    public LiveData<Currency> currency() {
-        return new CurrencyLiveData();
+    public Observable<Currency> currency() {
+        return Observable.create((ObservableOnSubscribe<Currency>) emitter -> {
+            SharedPreferences.OnSharedPreferenceChangeListener listener = (prefs, key) -> {
+                if (!emitter.isDisposed()){
+                    emitter.onNext(availableCurrencies.get(prefs.getString(key, "USD")));
+                }
+
+            };
+            prefs.registerOnSharedPreferenceChangeListener(listener);
+            emitter.setCancellable(() -> prefs.unregisterOnSharedPreferenceChangeListener(listener));
+            emitter.onNext(availableCurrencies.get(prefs.getString(KEY_CURRENCY, "USD")));
+        });
     }
 
     @Override
@@ -53,22 +67,4 @@ public class CurrencyRepoImpl implements CurrencyRepo{
         prefs.edit().putString(KEY_CURRENCY, currency.code()).apply();
     }
 
-    private class CurrencyLiveData extends LiveData<Currency> implements SharedPreferences.OnSharedPreferenceChangeListener {
-
-        @Override
-        protected void onActive() {
-            prefs.registerOnSharedPreferenceChangeListener(this);
-            setValue(availableCurrencies.get(prefs.getString(KEY_CURRENCY, "USD")));
-        }
-
-        @Override
-        protected void onInactive() {
-            prefs.unregisterOnSharedPreferenceChangeListener(this);
-        }
-
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-            setValue(availableCurrencies.get(prefs.getString(key, "USD")));
-        }
-    }
 }

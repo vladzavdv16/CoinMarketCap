@@ -18,59 +18,59 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
+
 public class RatesViewModel extends ViewModel {
 
-    private final LiveData<List<Coin>> coins;
+    private final Observable<List<Coin>> coins;
 
-    private final MutableLiveData<Boolean> isRefreshing = new MutableLiveData<>();
+    private final Subject<Boolean> isRefreshing = BehaviorSubject.create();
 
-    private final MutableLiveData<AtomicBoolean> forceRefresh = new MutableLiveData<>(new AtomicBoolean(true));
+    private final Subject<Class<?>> pullToRefresh = BehaviorSubject.createDefault(Void.TYPE);
 
-    private final MutableLiveData<SortBy> sortBy = new MutableLiveData<>(SortBy.RANK);
+    private final Subject<SortBy> sortBy = BehaviorSubject.createDefault(SortBy.RANK);
+
+    private final AtomicBoolean forceUpdate = new AtomicBoolean();
 
     private int sortIndex = 1;
 
     @Inject
     public RatesViewModel(CoinsRepo coinsRepo, CurrencyRepo currencyRepo) {
 
-        final LiveData<CoinsRepo.Query> query = Transformations.switchMap(forceRefresh, (r) -> {
-            return Transformations.switchMap(currencyRepo.currency(), (c) -> {
-                r.set(true);
-                isRefreshing.postValue(true);
-                return Transformations.map(sortBy, (s) -> {
-                    return CoinsRepo.Query.builder()
-                            .currency(c.code())
-                            .forceUpdate(r.getAndSet(false))
-                            .sortBy(s)
-                            .build();
+        this.coins = pullToRefresh
+                .map((ptr) -> CoinsRepo.Query.builder())
+                .switchMap((qb) -> currencyRepo.currency()
+                        .map((c) -> qb.currency(c.code())))
+                .doOnNext((qb) -> isRefreshing.onNext(true))
+                .doOnNext((qb) -> forceUpdate.set(true))
+                .switchMap((qb) -> sortBy
+                        .map(qb::sortBy))
+                .map((qb) -> qb.forceUpdate(forceUpdate.getAndSet(false)))
+                .map(CoinsRepo.Query.Builder::build)
+                .switchMap(coinsRepo::listings)
+                .doOnEach((ntf) -> isRefreshing.onNext(false));
 
-                });
-            });
-        });
-
-        final LiveData<List<Coin>> coins = Transformations.switchMap(query, coinsRepo::listings);
-        this.coins = Transformations.map(coins, (c) -> {
-            isRefreshing.postValue(false);
-            return c;
-        });
     }
 
     @NonNull
-    LiveData<List<Coin>> coins() {
-        return coins;
+    Observable<List<Coin>> coins() {
+        return coins.observeOn(AndroidSchedulers.mainThread());
     }
 
     @NonNull
-    LiveData<Boolean> isRefreshing() {
-        return isRefreshing;
+    Observable<Boolean> isRefreshing() {
+        return isRefreshing.observeOn(AndroidSchedulers.mainThread());
     }
 
     final void refresh() {
-        forceRefresh.postValue(new AtomicBoolean(true));
+        pullToRefresh.onNext(Void.TYPE);
     }
 
-    void switchSortingOrder(){
-        sortBy.postValue(SortBy.values()[sortIndex++ % SortBy.values().length]);
+    void switchSortingOrder() {
+        sortBy.onNext(SortBy.values()[sortIndex++ % SortBy.values().length]);
     }
 
 }
