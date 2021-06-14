@@ -1,12 +1,9 @@
 package com.light.loftcoin;
 
 import android.app.Application;
-import android.content.Context;
 
-import com.light.loftcoin.data.CoinsRepo;
-import com.light.loftcoin.data.CurrencyRepo;
 import com.light.loftcoin.data.DataModule;
-import com.light.loftcoin.widget.AppModule;
+import com.light.loftcoin.util.UtilModule;
 
 import javax.inject.Singleton;
 
@@ -17,7 +14,8 @@ import dagger.Component;
 @Component(
         modules = {
                 AppModule.class,
-                DataModule.class
+                DataModule.class,
+                UtilModule.class
         }
 )
 

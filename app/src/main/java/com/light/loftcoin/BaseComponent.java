@@ -4,9 +4,12 @@ import android.content.Context;
 
 import com.light.loftcoin.data.CoinsRepo;
 import com.light.loftcoin.data.CurrencyRepo;
+import com.light.loftcoin.util.ImageLoader;
 
 public interface BaseComponent {
-    abstract Context context();
-    abstract CoinsRepo coinsRepo();
-    abstract CurrencyRepo currencyRepo();
+    Context context();
+    CoinsRepo coinsRepo();
+    CurrencyRepo currencyRepo();
+    ImageLoader imageLoader();
+
 }

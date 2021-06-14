@@ -1,5 +1,7 @@
 package com.light.loftcoin.data;
 
+import androidx.annotation.Nullable;
+
 import com.google.auto.value.AutoValue;
 import com.google.auto.value.extension.memoized.Memoized;
 import com.squareup.moshi.Json;
@@ -32,6 +34,10 @@ public abstract class CmcCoin implements Coin{
     public abstract int rank();
 
     abstract Map<String, AutoValue_CmcCoin_Quote> quote();
+
+    @Override
+    @Nullable
+    public abstract String currencyCode();
 
     @AutoValue
     abstract static class Quote {
