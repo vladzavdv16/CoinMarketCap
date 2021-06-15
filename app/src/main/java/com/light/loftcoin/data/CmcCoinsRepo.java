@@ -1,25 +1,18 @@
 package com.light.loftcoin.data;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 
-import org.jetbrains.annotations.NotNull;
+import com.light.loftcoin.util.RxSchedulers;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
-import io.reactivex.schedulers.Schedulers;
-import okhttp3.ResponseBody;
-import retrofit2.Response;
-import timber.log.Timber;
+
 
 @Singleton
 class CmcCoinsRepo implements CoinsRepo {
@@ -28,15 +21,18 @@ class CmcCoinsRepo implements CoinsRepo {
 
     private final LoftDataBase db;
 
+    private final RxSchedulers schedulers;
+
 
     @Inject
-    public CmcCoinsRepo(CmcApi api, LoftDataBase db) {
+    public CmcCoinsRepo(CmcApi api, LoftDataBase db, RxSchedulers schedulers) {
         this.api = api;
         this.db = db;
+        this.schedulers = schedulers;
 
     }
 
-    @NotNull
+    @NonNull
     @Override
     public Observable<List<Coin>> listings(@NonNull Query query) {
         return Observable
@@ -46,11 +42,10 @@ class CmcCoinsRepo implements CoinsRepo {
                 .doOnNext((coins) -> db.coins().insert(coins))
                 .switchMap((coins) -> fetchFromDb(query))
                 .switchIfEmpty(fetchFromDb(query))
-                .map(ArrayList::new)
-                .subscribeOn(Schedulers.io())
-                ;
-
+                .<List<Coin>>map(Collections::unmodifiableList)
+                .subscribeOn(schedulers.io());
     }
+
 
     private Observable<List<RoomCoin>> fetchFromDb(Query query) {
         if (query.sortBy() == SortBy.PRICE) {
@@ -58,10 +53,9 @@ class CmcCoinsRepo implements CoinsRepo {
         } else {
             return db.coins().fetchAllSortByRank();
         }
-
     }
 
-    private Observable<List<RoomCoin>> mapToRoomCoins(Query query, List<? extends Coin> data) {
+    private List<RoomCoin> mapToRoomCoins(Query query, List<? extends Coin> data) {
         List<RoomCoin> roomCoins = new ArrayList<>(data.size());
         for (Coin coin : data) {
             roomCoins.add(RoomCoin.create(
@@ -74,7 +68,8 @@ class CmcCoinsRepo implements CoinsRepo {
                     coin.id()
             ));
         }
-        return (Observable<List<RoomCoin>>) roomCoins;
+        return roomCoins;
     }
+
 
 }

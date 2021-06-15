@@ -11,6 +11,7 @@ import com.light.loftcoin.data.Coin;
 import com.light.loftcoin.data.CoinsRepo;
 import com.light.loftcoin.data.CurrencyRepo;
 import com.light.loftcoin.data.SortBy;
+import com.light.loftcoin.util.RxSchedulers;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -35,10 +36,14 @@ public class RatesViewModel extends ViewModel {
 
     private final AtomicBoolean forceUpdate = new AtomicBoolean();
 
+    private final RxSchedulers schedulers;
+
     private int sortIndex = 1;
 
     @Inject
-    public RatesViewModel(CoinsRepo coinsRepo, CurrencyRepo currencyRepo) {
+    public RatesViewModel(CoinsRepo coinsRepo, CurrencyRepo currencyRepo, RxSchedulers schedulers) {
+
+        this.schedulers = schedulers;
 
         this.coins = pullToRefresh
                 .map((ptr) -> CoinsRepo.Query.builder())
@@ -57,12 +62,12 @@ public class RatesViewModel extends ViewModel {
 
     @NonNull
     Observable<List<Coin>> coins() {
-        return coins.observeOn(AndroidSchedulers.mainThread());
+        return coins.observeOn(schedulers.main());
     }
 
     @NonNull
     Observable<Boolean> isRefreshing() {
-        return isRefreshing.observeOn(AndroidSchedulers.mainThread());
+        return isRefreshing.observeOn(schedulers.main());
     }
 
     final void refresh() {

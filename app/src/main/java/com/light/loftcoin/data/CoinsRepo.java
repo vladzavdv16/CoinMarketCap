@@ -1,13 +1,9 @@
 package com.light.loftcoin.data;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.WorkerThread;
-import androidx.lifecycle.LiveData;
 
 import com.google.auto.value.AutoValue;
-import com.light.loftcoin.BuildConfig;
 
-import java.io.IOException;
 import java.util.List;
 
 import io.reactivex.Observable;

@@ -2,6 +2,8 @@ package com.light.loftcoin.util;
 
 import androidx.annotation.NonNull;
 
+import java.util.concurrent.ExecutorService;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -12,15 +14,17 @@ import io.reactivex.schedulers.Schedulers;
 @Singleton
 class RxSchedulersImpl implements RxSchedulers {
 
-    @Inject
-    RxSchedulersImpl() {
+    private final Scheduler ioScheduler;
 
+    @Inject
+    RxSchedulersImpl(ExecutorService executor) {
+        ioScheduler = Schedulers.from(executor);
     }
 
     @NonNull
     @Override
     public Scheduler io() {
-        return Schedulers.io();
+        return ioScheduler;
     }
 
     @NonNull
