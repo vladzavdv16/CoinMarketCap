@@ -66,6 +66,32 @@ class WalletsRepoImpl implements WalletsRepo {
     @NonNull
     @Override
     public Observable<List<Transaction>> transactions(@NonNull Wallet wallet) {
-        return Observable.empty();
+        return Observable
+                .<QuerySnapshot>create(emitter -> {
+                    final ListenerRegistration registration = firestore
+                            .collection("wallets")
+                            .document(wallet.uid())
+                            .collection("transactions")
+                            .addSnapshotListener((snapshots, e) -> {
+                                if (emitter.isDisposed()) return;
+                                if (snapshots != null) {
+                                    emitter.onNext(snapshots);
+                                } else if (e != null) {
+                                    emitter.tryOnError(e);
+                                }
+                            });
+                    emitter.setCancellable(registration::remove);
+                })
+                .map(QuerySnapshot::getDocuments)
+                .switchMapSingle((documents) -> Observable
+                        .fromIterable(documents)
+                        .map((document) -> Transaction.create(
+                                document.getId(),
+                                wallet.coin(),
+                                document.getDouble("amount"),
+                                document.getDate("created_at")
+                        ))
+                        .toList()
+                );
     }
 }
