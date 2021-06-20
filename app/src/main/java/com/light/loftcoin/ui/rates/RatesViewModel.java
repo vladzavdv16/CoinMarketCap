@@ -10,8 +10,10 @@ import androidx.lifecycle.ViewModel;
 import com.light.loftcoin.data.Coin;
 import com.light.loftcoin.data.CoinsRepo;
 import com.light.loftcoin.data.CurrencyRepo;
+import com.light.loftcoin.data.SortBy;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 import javax.inject.Inject;
@@ -22,18 +24,27 @@ public class RatesViewModel extends ViewModel {
 
     private final MutableLiveData<Boolean> isRefreshing = new MutableLiveData<>();
 
-    private final MutableLiveData<Boolean> forceRefresh = new MutableLiveData<>(false);
+    private final MutableLiveData<AtomicBoolean> forceRefresh = new MutableLiveData<>(new AtomicBoolean(true));
+
+    private final MutableLiveData<SortBy> sortBy = new MutableLiveData<>(SortBy.RANK);
+
+    private int sortIndex = 1;
 
     @Inject
     public RatesViewModel(CoinsRepo coinsRepo, CurrencyRepo currencyRepo) {
 
-       final LiveData<CoinsRepo.Query> query = Transformations.switchMap(forceRefresh, (r) -> {
-            return Transformations.map(currencyRepo.currency(), (c) -> {
+        final LiveData<CoinsRepo.Query> query = Transformations.switchMap(forceRefresh, (r) -> {
+            return Transformations.switchMap(currencyRepo.currency(), (c) -> {
+                r.set(true);
                 isRefreshing.postValue(true);
-                return CoinsRepo.Query.builder()
-                        .currency(c.code())
-                        .forceUpdate(r)
-                        .build();
+                return Transformations.map(sortBy, (s) -> {
+                    return CoinsRepo.Query.builder()
+                            .currency(c.code())
+                            .forceUpdate(r.getAndSet(false))
+                            .sortBy(s)
+                            .build();
+
+                });
             });
         });
 
@@ -55,7 +66,11 @@ public class RatesViewModel extends ViewModel {
     }
 
     final void refresh() {
-        forceRefresh.postValue(true);
+        forceRefresh.postValue(new AtomicBoolean(true));
+    }
+
+    void switchSortingOrder(){
+        sortBy.postValue(SortBy.values()[sortIndex++ % SortBy.values().length]);
     }
 
 }

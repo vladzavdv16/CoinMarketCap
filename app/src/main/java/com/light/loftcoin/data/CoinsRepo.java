@@ -13,9 +13,6 @@ import java.util.List;
 public interface CoinsRepo {
 
     @NonNull
-    @WorkerThread
-    List<? extends Coin> listings(@NonNull String currency) throws IOException;
-
     LiveData<List<Coin>> listings(@NonNull Query query);
 
     @AutoValue
@@ -27,13 +24,18 @@ public interface CoinsRepo {
         }
 
         abstract String currency();
+
         abstract boolean forceUpdate();
+
+        abstract SortBy sortBy();
 
         @AutoValue.Builder
         public static abstract class Builder{
             public abstract Builder currency(String currency);
 
             public abstract Builder forceUpdate(boolean forceUpdate);
+
+            public abstract Builder sortBy(SortBy sortBy);
 
             public abstract Query build();
 
