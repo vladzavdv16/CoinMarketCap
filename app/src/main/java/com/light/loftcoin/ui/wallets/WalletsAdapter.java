@@ -5,14 +5,39 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.light.loftcoin.data.Wallet;
 import com.light.loftcoin.databinding.LiWalletBinding;
+import com.light.loftcoin.util.PriceFormatter;
 
-public class WalletsAdapter extends RecyclerView.Adapter<WalletsAdapter.ViewHolder> {
+import java.util.Objects;
+
+import javax.inject.Inject;
+
+class WalletsAdapter extends ListAdapter<Wallet, WalletsAdapter.ViewHolder> {
+
+    private final PriceFormatter priceFormatter;
 
     private LayoutInflater inflater;
 
+    @Inject
+    WalletsAdapter(PriceFormatter priceFormatter) {
+        super(new DiffUtil.ItemCallback<Wallet>() {
+            @Override
+            public boolean areItemsTheSame(@NonNull Wallet oldItem, @NonNull Wallet newItem) {
+                return Objects.equals(oldItem.uid(), newItem.uid());
+            }
+
+            @Override
+            public boolean areContentsTheSame(@NonNull Wallet oldItem, @NonNull Wallet newItem) {
+                return Objects.equals(oldItem, newItem);
+            }
+        });
+        this.priceFormatter = priceFormatter;
+    }
 
     @NonNull
     @Override
@@ -22,24 +47,27 @@ public class WalletsAdapter extends RecyclerView.Adapter<WalletsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-    }
-
-    @Override
-    public int getItemCount() {
-        return 5;
+        final Wallet wallet = getItem(position);
+        holder.binding.symbol.setText(wallet.coin().symbol());
+        holder.binding.balance1.setText(priceFormatter.format(wallet.balance()));
     }
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-
         inflater = LayoutInflater.from(recyclerView.getContext());
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ViewHolder(LiWalletBinding binding) {
+        private final LiWalletBinding binding;
+
+        ViewHolder(@NonNull LiWalletBinding binding) {
             super(binding.getRoot());
+            binding.getRoot().setClipToOutline(true);
+            this.binding = binding;
         }
+
     }
+
 }

@@ -16,13 +16,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 
-public class CurrencyRepoImpl implements CurrencyRepo {
-
+@Singleton
+class CurrencyRepoImpl implements CurrencyRepo {
 
     private static final String KEY_CURRENCY = "currency";
 
@@ -49,12 +50,11 @@ public class CurrencyRepoImpl implements CurrencyRepo {
     @NonNull
     @Override
     public Observable<Currency> currency() {
-        return Observable.create((ObservableOnSubscribe<Currency>) emitter -> {
+        return Observable.create(emitter -> {
             SharedPreferences.OnSharedPreferenceChangeListener listener = (prefs, key) -> {
-                if (!emitter.isDisposed()){
+                if (!emitter.isDisposed()) {
                     emitter.onNext(availableCurrencies.get(prefs.getString(key, "USD")));
                 }
-
             };
             prefs.registerOnSharedPreferenceChangeListener(listener);
             emitter.setCancellable(() -> prefs.unregisterOnSharedPreferenceChangeListener(listener));

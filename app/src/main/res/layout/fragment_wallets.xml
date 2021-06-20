@@ -30,7 +30,8 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/li_wallet"
-        tools:orientation="horizontal" />
+        tools:orientation="horizontal"
+        android:visibility="gone"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
