@@ -1,9 +1,13 @@
 package com.light.loftcoin.ui.wallets;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -19,12 +23,14 @@ import androidx.recyclerview.widget.SnapHelper;
 import com.light.loftcoin.BaseComponent;
 import com.light.loftcoin.R;
 import com.light.loftcoin.databinding.FragmentWalletsBinding;
+import com.light.loftcoin.widget.RecyclerViews;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
+import timber.log.Timber;
 
 public class WalletsFragment extends Fragment {
 
@@ -38,7 +44,9 @@ public class WalletsFragment extends Fragment {
 
     private SnapHelper walletsSnapHelper;
 
-    private WalletsAdapter adapter;
+    private WalletsAdapter walletsAdapter;
+
+    private TransactionsAdapter transactionsAdapter;
 
     @Inject
     public WalletsFragment(BaseComponent baseComponent) {
@@ -52,7 +60,8 @@ public class WalletsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this, component.viewModelFactory())
                 .get(WalletsViewModel.class);
-        adapter = component.walletsAdapter();
+        walletsAdapter = component.walletsAdapter();
+        transactionsAdapter = component.transactionsAdapter();
     }
 
     @Nullable
@@ -64,6 +73,7 @@ public class WalletsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setHasOptionsMenu(true);
         binding = FragmentWalletsBinding.bind(view);
         walletsSnapHelper = new PagerSnapHelper();
         walletsSnapHelper.attachToRecyclerView(binding.recycler);
@@ -77,15 +87,41 @@ public class WalletsFragment extends Fragment {
 
         binding.recycler.setLayoutManager(new LinearLayoutManager(view.getContext(), RecyclerView.HORIZONTAL, false));
         binding.recycler.addOnScrollListener(new CarouselScroller());
+        disposable.add(RecyclerViews
+                .onSnap(binding.recycler, walletsSnapHelper)
+                .subscribe(viewModel::changeWallet));
 
-        binding.recycler.setAdapter(adapter);
+        binding.recycler.setAdapter(walletsAdapter);
 
-        disposable.add(viewModel.wallets().subscribe(adapter::submitList));
+        disposable.add(viewModel.wallets().subscribe(walletsAdapter::submitList));
         disposable.add(viewModel.wallets().map(List::isEmpty).subscribe((isEmpty) -> {
             binding.walletCard.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
             binding.recycler.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
         }));
 
+        binding.transactions.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        binding.transactions.setAdapter(transactionsAdapter);
+        binding.transactions.setHasFixedSize(true);
+
+        disposable.add(viewModel.transactions().subscribe(transactionsAdapter::submitList));
+
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.wallets, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @SuppressLint("TimberArgCount")
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (R.id.add == item.getItemId()) {
+            Timber.d(" ", item);
+            disposable.add(viewModel.addWallet().subscribe());
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -94,6 +130,10 @@ public class WalletsFragment extends Fragment {
         binding.recycler.setAdapter(null);
         disposable.clear();
         super.onDestroyView();
+    }
+
+    private void accept(Integer position) {
+        viewModel.changeWallet(position);
     }
 
     private static class CarouselScroller extends RecyclerView.OnScrollListener {

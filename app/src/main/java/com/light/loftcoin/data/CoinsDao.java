@@ -32,6 +32,12 @@ abstract class CoinsDao {
     @Query("SELECT COUNT(id) FROM RoomCoin")
     abstract int coinsCount();
 
+    @Query("SELECT * FROM RoomCoin WHERE id NOT IN (:ids) ORDER BY rank ASC LIMIT 1")
+    abstract Single<RoomCoin> nextPopularCoin(List<Integer> ids);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract void insert(List<RoomCoin> coins);
+
+    @Query("SELECT * FROM RoomCoin ORDER BY rank ASC LIMIT :limit")
+    abstract Observable<List<RoomCoin>> fetchTop(int limit);
 }

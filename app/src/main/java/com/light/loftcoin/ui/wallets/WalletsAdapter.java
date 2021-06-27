@@ -13,7 +13,7 @@ import com.light.loftcoin.data.Wallet;
 import com.light.loftcoin.databinding.LiWalletBinding;
 import com.light.loftcoin.util.BalanceFormatter;
 import com.light.loftcoin.util.ImageLoader;
-import com.light.loftcoin.util.OutlineCircle;
+import com.light.loftcoin.widget.OutlineCircle;
 import com.light.loftcoin.util.PriceFormatter;
 
 import java.util.Objects;

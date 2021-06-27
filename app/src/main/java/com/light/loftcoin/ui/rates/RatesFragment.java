@@ -14,12 +14,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.light.loftcoin.BaseComponent;
 import com.light.loftcoin.R;
 import com.light.loftcoin.databinding.FragmentRatesBinding;
-import com.light.loftcoin.util.PriceFormatter;
 
 import javax.inject.Inject;
 
@@ -69,6 +69,9 @@ public class RatesFragment extends Fragment {
         binding.recycler.setHasFixedSize(true);
         binding.refresh.setOnRefreshListener(viewModel::refresh);
         disposable.add(viewModel.coins().subscribe(adapter::submitList));
+        disposable.add(viewModel.onError().subscribe(e ->{
+            Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_SHORT).show();
+        }));
         disposable.add(viewModel.isRefreshing().subscribe(binding.refresh::setRefreshing));
 
     }
@@ -86,7 +89,7 @@ public class RatesFragment extends Fragment {
                     .findNavController(this)
                     .navigate(R.id.currency_dialog);
             return true;
-        }else if(R.id.sort == item.getItemId()){
+        } else if (R.id.sort == item.getItemId()) {
             viewModel.switchSortingOrder();
             return true;
         }

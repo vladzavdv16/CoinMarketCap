@@ -13,6 +13,7 @@ import com.light.loftcoin.data.CurrencyRepo;
 import com.light.loftcoin.data.SortBy;
 import com.light.loftcoin.util.RxSchedulers;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -22,6 +23,7 @@ import javax.inject.Inject;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 public class RatesViewModel extends ViewModel {
@@ -33,6 +35,8 @@ public class RatesViewModel extends ViewModel {
     private final Subject<Class<?>> pullToRefresh = BehaviorSubject.createDefault(Void.TYPE);
 
     private final Subject<SortBy> sortBy = BehaviorSubject.createDefault(SortBy.RANK);
+
+    private final Subject<Throwable> error = PublishSubject.create();
 
     private final AtomicBoolean forceUpdate = new AtomicBoolean();
 
@@ -55,8 +59,13 @@ public class RatesViewModel extends ViewModel {
                         .map(qb::sortBy))
                 .map((qb) -> qb.forceUpdate(forceUpdate.getAndSet(false)))
                 .map(CoinsRepo.Query.Builder::build)
-                .switchMap(coinsRepo::listings)
-                .doOnEach((ntf) -> isRefreshing.onNext(false));
+                .switchMap(query -> coinsRepo.listings(query)
+                        .doOnError(error::onNext)
+                        .onErrorReturnItem(Collections.emptyList())
+                )
+                .doOnEach((ntf) -> isRefreshing.onNext(false))
+                .replay(1)
+                .autoConnect();
 
     }
 
@@ -68,6 +77,11 @@ public class RatesViewModel extends ViewModel {
     @NonNull
     Observable<Boolean> isRefreshing() {
         return isRefreshing.observeOn(schedulers.main());
+    }
+
+    @NonNull
+    public Observable<Throwable> onError() {
+        return error.observeOn(schedulers.main());
     }
 
     final void refresh() {

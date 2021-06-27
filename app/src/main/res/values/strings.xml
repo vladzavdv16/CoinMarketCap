@@ -26,4 +26,7 @@
 
     <string name="default_chanel_id" translatable="false">default_channel</string>
     <string name="default_chanel_name">@string/app_name</string>
+
+    <!-- MenuWallets -->
+    <string name="add">Добавить</string>
 </resources>
