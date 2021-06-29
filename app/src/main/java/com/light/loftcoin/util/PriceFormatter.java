@@ -41,7 +41,8 @@ public class PriceFormatter implements Formatter<Double>{
             locale = locales.get(0);
         }
 
-        return NumberFormat.getCurrencyInstance(locale).format(value);
+        final NumberFormat format = NumberFormat.getCurrencyInstance(locale);
+        return format.format(value);
     }
 
     @NonNull

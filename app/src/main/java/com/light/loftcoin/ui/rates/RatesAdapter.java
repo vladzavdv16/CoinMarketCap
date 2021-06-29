@@ -2,12 +2,9 @@ package com.light.loftcoin.ui.rates;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Outline;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,16 +16,12 @@ import com.light.loftcoin.BuildConfig;
 import com.light.loftcoin.R;
 import com.light.loftcoin.data.Coin;
 import com.light.loftcoin.databinding.LiRatesBinding;
-import com.light.loftcoin.util.Formatter;
 import com.light.loftcoin.util.ImageLoader;
-import com.light.loftcoin.util.OutlineCircle;
+import com.light.loftcoin.widget.OutlineCircle;
 import com.light.loftcoin.util.PercentFormatter;
 import com.light.loftcoin.util.PriceFormatter;
-import com.squareup.picasso.Picasso;
 
-import java.text.NumberFormat;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 import javax.inject.Inject;

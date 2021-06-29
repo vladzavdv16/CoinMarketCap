@@ -8,68 +8,74 @@
     android:background="@drawable/bq_wallet_card">
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_left"
+        android:id="@+id/guideline_top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.4" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_top"
+        android:id="@+id/guideline_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.4" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/bottom_left_art"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/artboard_top"
-        app:layout_constraintEnd_toStartOf="@id/guideline_top"
-        app:layout_constraintTop_toBottomOf="@id/guideline_left" />
+        app:layout_constraintEnd_toStartOf="@+id/guideline_left"
+        app:layout_constraintTop_toBottomOf="@+id/guideline_top"
+        tools:ignore="ContentDescription" />
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:id="@+id/logo"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
+        android:background="@color/blue_grey"
+        android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
         tools:src="@tools:sample/avatars" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/symbol"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:textAppearance="?attr/textAppearanceHeadline4"
+        app:layout_constraintBottom_toBottomOf="@+id/logo"
+        app:layout_constraintStart_toEndOf="@+id/logo"
+        app:layout_constraintTop_toTopOf="@+id/logo"
         tools:text="BTC" />
 
     <TextView
+        android:id="@+id/balance1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="40dp"
-        android:textSize="16sp"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textAppearance="?attr/textAppearanceHeadline3"
+        app:layout_constraintBottom_toTopOf="@+id/balance2"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="123 BTC" />
 
     <TextView
+        android:id="@+id/balance2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
+        android:textAppearance="?attr/textAppearanceHeadline4"
+        android:textColor="@color/grey_blue"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:textSize="12sp"
         tools:text="123 $" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
