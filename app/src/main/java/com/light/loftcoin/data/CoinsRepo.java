@@ -35,7 +35,7 @@ public interface CoinsRepo {
 
         abstract String currency();
 
-        abstract boolean forceUpdate();
+        public abstract boolean forceUpdate();
 
         abstract SortBy sortBy();
 
