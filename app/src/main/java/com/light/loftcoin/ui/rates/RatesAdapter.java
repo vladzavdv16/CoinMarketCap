@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,9 +18,9 @@ import com.light.loftcoin.R;
 import com.light.loftcoin.data.Coin;
 import com.light.loftcoin.databinding.LiRatesBinding;
 import com.light.loftcoin.util.ImageLoader;
-import com.light.loftcoin.widget.OutlineCircle;
 import com.light.loftcoin.util.PercentFormatter;
 import com.light.loftcoin.util.PriceFormatter;
+import com.light.loftcoin.widget.OutlineCircle;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +28,8 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 class RatesAdapter extends ListAdapter<Coin, RatesAdapter.ViewHolder> {
+
+    private Context context;
 
     private final PercentFormatter percentFormatter;
 
@@ -80,6 +83,13 @@ class RatesAdapter extends ListAdapter<Coin, RatesAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Coin coin = getItem(position);
+        if (position % 2 == 1) {
+            holder.binding.getRoot().setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(),
+                    R.color.dark));
+        } else {
+            holder.binding.getRoot().setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(),
+                    R.color.dark_two));
+        }
         holder.binding.symbol.setText(coin.symbol());
         holder.binding.price.setText(priceFormatter.format(coin.currencyCode(), coin.price()));
         holder.binding.change.setText(percentFormatter.format(coin.change24h()));
